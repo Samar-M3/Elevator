@@ -1,0 +1,74 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\L5 SEM_3_2026\\Desktop Application Development\\Assignment\\Elevator\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F7F5C536-2908-A22B-9836-AB3FF366E6DA}|Elevator\\Elevator.csproj|d:\\l5 sem_3_2026\\desktop application development\\assignment\\elevator\\elevator\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F7F5C536-2908-A22B-9836-AB3FF366E6DA}|Elevator\\Elevator.csproj|solutionrelative:elevator\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F7F5C536-2908-A22B-9836-AB3FF366E6DA}|Elevator\\Elevator.csproj|d:\\l5 sem_3_2026\\desktop application development\\assignment\\elevator\\elevator\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F7F5C536-2908-A22B-9836-AB3FF366E6DA}|Elevator\\Elevator.csproj|solutionrelative:elevator\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F7F5C536-2908-A22B-9836-AB3FF366E6DA}|Elevator\\Elevator.csproj|d:\\l5 sem_3_2026\\desktop application development\\assignment\\elevator\\elevator\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{F7F5C536-2908-A22B-9836-AB3FF366E6DA}|Elevator\\Elevator.csproj|solutionrelative:elevator\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MainForm.cs [Design]",
+              "DocumentMoniker": "D:\\L5 SEM_3_2026\\Desktop Application Development\\Assignment\\Elevator\\Elevator\\MainForm.cs",
+              "RelativeDocumentMoniker": "Elevator\\MainForm.cs",
+              "ToolTip": "D:\\L5 SEM_3_2026\\Desktop Application Development\\Assignment\\Elevator\\Elevator\\MainForm.cs [Design]*",
+              "RelativeToolTip": "Elevator\\MainForm.cs [Design]*",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-20T07:14:24.282Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainForm.Designer.cs",
+              "DocumentMoniker": "D:\\L5 SEM_3_2026\\Desktop Application Development\\Assignment\\Elevator\\Elevator\\MainForm.Designer.cs",
+              "RelativeDocumentMoniker": "Elevator\\MainForm.Designer.cs",
+              "ToolTip": "D:\\L5 SEM_3_2026\\Desktop Application Development\\Assignment\\Elevator\\Elevator\\MainForm.Designer.cs",
+              "RelativeToolTip": "Elevator\\MainForm.Designer.cs",
+              "ViewState": "AgIAAHcAAAAAAAAAAAAnwI8AAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-19T08:49:39.48Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainForm.cs",
+              "DocumentMoniker": "D:\\L5 SEM_3_2026\\Desktop Application Development\\Assignment\\Elevator\\Elevator\\MainForm.cs",
+              "RelativeDocumentMoniker": "Elevator\\MainForm.cs",
+              "ToolTip": "D:\\L5 SEM_3_2026\\Desktop Application Development\\Assignment\\Elevator\\Elevator\\MainForm.cs*",
+              "RelativeToolTip": "Elevator\\MainForm.cs*",
+              "ViewState": "AgIAADYAAAAAAAAAAAAQwEQAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-19T06:52:44.968Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
