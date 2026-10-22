@@ -42,10 +42,13 @@
             shaftpanel = new Panel();
             car = new PictureBox();
             tmrElevator = new System.Windows.Forms.Timer(components);
+            dgvLog = new DataGridView();
+            tmrDoor = new System.Windows.Forms.Timer(components);
             MainPanel.SuspendLayout();
             grpControlPanel.SuspendLayout();
             shaftpanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)car).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvLog).BeginInit();
             SuspendLayout();
             // 
             // MainPanel
@@ -165,11 +168,23 @@
             car.TabIndex = 0;
             car.TabStop = false;
             // 
+            // dgvLog
+            // 
+            dgvLog.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvLog.Location = new Point(821, 29);
+            dgvLog.Name = "dgvLog";
+            dgvLog.ReadOnly = true;
+            dgvLog.RowHeadersWidth = 51;
+            dgvLog.Size = new Size(429, 301);
+            dgvLog.TabIndex = 1;
+            dgvLog.Visible = false;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1383, 646);
+            Controls.Add(dgvLog);
             Controls.Add(MainPanel);
             Name = "MainForm";
             Text = "Elevator Control";
@@ -180,6 +195,7 @@
             grpControlPanel.PerformLayout();
             shaftpanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)car).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvLog).EndInit();
             ResumeLayout(false);
         }
 
@@ -198,5 +214,7 @@
         private Button btnLog;
         public PictureBox car;
         private System.Windows.Forms.Timer tmrElevator;
+        private DataGridView dgvLog;
+        private System.Windows.Forms.Timer tmrDoor;
     }
 }
