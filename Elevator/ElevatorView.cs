@@ -7,7 +7,6 @@ namespace Elevator
     public class ElevatorView : IElevatorObserver
     {
         public ElevatorUnit Unit { get; }
-
         private readonly Control shaft;
         private readonly PictureBox car;
         private readonly Label display;
