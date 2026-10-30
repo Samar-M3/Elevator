@@ -30,8 +30,11 @@
         {
             components = new System.ComponentModel.Container();
             MainPanel = new Panel();
+            deleteLog = new Button();
             lblFloor1StatusB = new Label();
             groupBox1 = new GroupBox();
+            ClosedoorB = new Button();
+            OpendoorB = new Button();
             lblPanelDisplayB = new Label();
             btnPanelFloor1B = new Button();
             btnPanelFloor2B = new Button();
@@ -64,6 +67,8 @@
             panel18 = new Panel();
             btnLog = new Button();
             grpControlPanel = new GroupBox();
+            ClosedoorA = new Button();
+            OpendoorA = new Button();
             lblPanelDisplay = new Label();
             btnPanelFloor1 = new Button();
             btnPanelFloor2 = new Button();
@@ -86,10 +91,6 @@
             panel6 = new Panel();
             Door1 = new Panel();
             panel5 = new Panel();
-            OpendoorA = new Button();
-            ClosedoorA = new Button();
-            OpendoorB = new Button();
-            ClosedoorB = new Button();
             MainPanel.SuspendLayout();
             groupBox1.SuspendLayout();
             pnlShaftA.SuspendLayout();
@@ -109,7 +110,8 @@
             // 
             // MainPanel
             // 
-            MainPanel.BackColor = SystemColors.Info;
+            MainPanel.BackColor = SystemColors.InactiveCaption;
+            MainPanel.Controls.Add(deleteLog);
             MainPanel.Controls.Add(lblFloor1StatusB);
             MainPanel.Controls.Add(groupBox1);
             MainPanel.Controls.Add(lblFloor2StatusB);
@@ -125,6 +127,16 @@
             MainPanel.Name = "MainPanel";
             MainPanel.Size = new Size(818, 429);
             MainPanel.TabIndex = 0;
+            // 
+            // deleteLog
+            // 
+            deleteLog.Location = new Point(675, 373);
+            deleteLog.Name = "deleteLog";
+            deleteLog.Size = new Size(94, 29);
+            deleteLog.TabIndex = 13;
+            deleteLog.Text = "Delete Log";
+            deleteLog.UseVisualStyleBackColor = true;
+            deleteLog.Click += deleteLog_Click;
             // 
             // lblFloor1StatusB
             // 
@@ -146,20 +158,38 @@
             groupBox1.Controls.Add(lblPanelDisplayB);
             groupBox1.Controls.Add(btnPanelFloor1B);
             groupBox1.Controls.Add(btnPanelFloor2B);
-            groupBox1.Location = new Point(652, 91);
+            groupBox1.Location = new Point(652, 108);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(148, 257);
+            groupBox1.Size = new Size(148, 222);
             groupBox1.TabIndex = 11;
             groupBox1.TabStop = false;
+            // 
+            // ClosedoorB
+            // 
+            ClosedoorB.Location = new Point(74, 176);
+            ClosedoorB.Name = "ClosedoorB";
+            ClosedoorB.Size = new Size(50, 31);
+            ClosedoorB.TabIndex = 5;
+            ClosedoorB.Text = "▶ ◀";
+            ClosedoorB.UseVisualStyleBackColor = true;
+            // 
+            // OpendoorB
+            // 
+            OpendoorB.Location = new Point(13, 176);
+            OpendoorB.Name = "OpendoorB";
+            OpendoorB.Size = new Size(55, 29);
+            OpendoorB.TabIndex = 4;
+            OpendoorB.Text = "◀ ▶";
+            OpendoorB.UseVisualStyleBackColor = true;
             // 
             // lblPanelDisplayB
             // 
             lblPanelDisplayB.AutoSize = true;
-            lblPanelDisplayB.Location = new Point(44, 33);
+            lblPanelDisplayB.Location = new Point(61, 36);
             lblPanelDisplayB.Name = "lblPanelDisplayB";
-            lblPanelDisplayB.Size = new Size(56, 20);
+            lblPanelDisplayB.Size = new Size(17, 20);
             lblPanelDisplayB.TabIndex = 2;
-            lblPanelDisplayB.Text = "display";
+            lblPanelDisplayB.Text = "1";
             // 
             // btnPanelFloor1B
             // 
@@ -453,21 +483,38 @@
             grpControlPanel.Controls.Add(lblPanelDisplay);
             grpControlPanel.Controls.Add(btnPanelFloor1);
             grpControlPanel.Controls.Add(btnPanelFloor2);
-            grpControlPanel.Location = new Point(15, 91);
+            grpControlPanel.Location = new Point(15, 108);
             grpControlPanel.Name = "grpControlPanel";
-            grpControlPanel.Size = new Size(154, 257);
+            grpControlPanel.Size = new Size(154, 222);
             grpControlPanel.TabIndex = 5;
             grpControlPanel.TabStop = false;
+            // 
+            // ClosedoorA
+            // 
+            ClosedoorA.Location = new Point(73, 167);
+            ClosedoorA.Name = "ClosedoorA";
+            ClosedoorA.Size = new Size(49, 34);
+            ClosedoorA.TabIndex = 4;
+            ClosedoorA.Text = "▶ ◀";
+            ClosedoorA.UseVisualStyleBackColor = true;
+            // 
+            // OpendoorA
+            // 
+            OpendoorA.Location = new Point(20, 167);
+            OpendoorA.Name = "OpendoorA";
+            OpendoorA.Size = new Size(47, 34);
+            OpendoorA.TabIndex = 3;
+            OpendoorA.Text = "◀ ▶";
+            OpendoorA.UseVisualStyleBackColor = true;
             // 
             // lblPanelDisplay
             // 
             lblPanelDisplay.AutoSize = true;
-            lblPanelDisplay.Location = new Point(44, 37);
+            lblPanelDisplay.Location = new Point(66, 33);
             lblPanelDisplay.Name = "lblPanelDisplay";
-            lblPanelDisplay.Size = new Size(56, 20);
+            lblPanelDisplay.Size = new Size(17, 20);
             lblPanelDisplay.TabIndex = 2;
-            lblPanelDisplay.Text = "display";
-            lblPanelDisplay.Click += lblPanelDisplay_Click;
+            lblPanelDisplay.Text = "1";
             // 
             // btnPanelFloor1
             // 
@@ -533,11 +580,11 @@
             // dgvLog
             // 
             dgvLog.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvLog.Location = new Point(850, 16);
+            dgvLog.Location = new Point(836, 3);
             dgvLog.Name = "dgvLog";
             dgvLog.ReadOnly = true;
             dgvLog.RowHeadersWidth = 51;
-            dgvLog.Size = new Size(499, 413);
+            dgvLog.Size = new Size(686, 423);
             dgvLog.TabIndex = 1;
             dgvLog.Visible = false;
             // 
@@ -651,47 +698,11 @@
             panel5.Size = new Size(14, 425);
             panel5.TabIndex = 3;
             // 
-            // OpendoorA
-            // 
-            OpendoorA.Location = new Point(13, 176);
-            OpendoorA.Name = "OpendoorA";
-            OpendoorA.Size = new Size(94, 29);
-            OpendoorA.TabIndex = 3;
-            OpendoorA.Text = "<>";
-            OpendoorA.UseVisualStyleBackColor = true;
-            // 
-            // ClosedoorA
-            // 
-            ClosedoorA.Location = new Point(28, 222);
-            ClosedoorA.Name = "ClosedoorA";
-            ClosedoorA.Size = new Size(94, 29);
-            ClosedoorA.TabIndex = 4;
-            ClosedoorA.Text = "><";
-            ClosedoorA.UseVisualStyleBackColor = true;
-            // 
-            // OpendoorB
-            // 
-            OpendoorB.Location = new Point(23, 157);
-            OpendoorB.Name = "OpendoorB";
-            OpendoorB.Size = new Size(94, 29);
-            OpendoorB.TabIndex = 4;
-            OpendoorB.Text = "<>";
-            OpendoorB.UseVisualStyleBackColor = true;
-            // 
-            // ClosedoorB
-            // 
-            ClosedoorB.Location = new Point(23, 208);
-            ClosedoorB.Name = "ClosedoorB";
-            ClosedoorB.Size = new Size(94, 29);
-            ClosedoorB.TabIndex = 5;
-            ClosedoorB.Text = "><";
-            ClosedoorB.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1383, 646);
+            ClientSize = new Size(1534, 453);
             Controls.Add(dgvLog);
             Controls.Add(MainPanel);
             Name = "MainForm";
@@ -786,5 +797,6 @@
         private Button OpendoorB;
         private Button ClosedoorA;
         private Button OpendoorA;
+        private Button deleteLog;
     }
 }

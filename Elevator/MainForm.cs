@@ -1,5 +1,9 @@
+//MainForm.cs is a C# Windows Forms application that simulates the operation of two elevators (A and B) in a building. The code defines the MainForm class, which implements the IElevatorObserver interface to receive updates from the elevator units. The form includes various controls for displaying elevator status, requesting floors, and logging events.
+
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing.Drawing2D;
 
 namespace Elevator
 {
@@ -23,6 +27,12 @@ namespace Elevator
         private int floor1Y;                         // car A's designer position
         private int collapsedWidth, expandedWidth;   // form width without / with the log grid
 
+        // Log writing: events are queued with their timestamp and written one after another
+        // by a single background worker, so rows keep the order the events happened in.
+        private readonly ConcurrentQueue<(int Floor, string Text, DateTime When)> logQueue = new();
+        private bool logWorkerBusy;                  // UI thread only
+        private bool dbErrorShown;                   // stops one pop-up per event when the DB is unavailable
+
         private int FloorToY(int floor) => floor == 1 ? floor1Y : FLOOR2_Y;
 
         public MainForm()
@@ -40,7 +50,14 @@ namespace Elevator
             btnRequestFloor2.Click -= btnRequestFloor2_Click; btnRequestFloor2.Click += btnRequestFloor2_Click;
             btnPanelFloor1.Click -= btnPanelFloor1_Click; btnPanelFloor1.Click += btnPanelFloor1_Click;
             btnPanelFloor2.Click -= btnPanelFloor2_Click; btnPanelFloor2.Click += btnPanelFloor2_Click;
+            btnPanelFloor1B.Click -= btnPanelFloor1B_Click; btnPanelFloor1B.Click += btnPanelFloor1B_Click;
+            btnPanelFloor2B.Click -= btnPanelFloor2B_Click; btnPanelFloor2B.Click += btnPanelFloor2B_Click;
+            OpendoorA.Click -= OpendoorA_Click; OpendoorA.Click += OpendoorA_Click;
+            ClosedoorA.Click -= ClosedoorA_Click; ClosedoorA.Click += ClosedoorA_Click;
+            OpendoorB.Click -= OpendoorB_Click; OpendoorB.Click += OpendoorB_Click;
+            ClosedoorB.Click -= ClosedoorB_Click; ClosedoorB.Click += ClosedoorB_Click;
             btnLog.Click -= btnLog_Click; btnLog.Click += btnLog_Click;
+            deleteLog.Click -= deleteLog_Click; deleteLog.Click += deleteLog_Click;
 
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
@@ -55,6 +72,12 @@ namespace Elevator
                 b.FlatStyle = FlatStyle.Flat;
                 b.BackColor = Color.Silver;
             }
+
+            // Round floor buttons with a number instead of text
+            MakeRound(btnPanelFloor1, "1");
+            MakeRound(btnPanelFloor2, "2");
+            MakeRound(btnPanelFloor1B, "1");
+            MakeRound(btnPanelFloor2B, "2");
 
             btnRequestFloor1.Text = "\u25B2 Call";       // floor 1 can only go up
             btnRequestFloor2.Text = "\u25BC Call";       // floor 2 can only go down
@@ -86,14 +109,18 @@ namespace Elevator
                 u.Attach(this);
             }
 
-            // Panel B requests go to elevator B only
-            btnPanelFloor1B.Click += (s, ev) => unitB.AddStop(1, "Panel request for floor 1");
-            btnPanelFloor2B.Click += (s, ev) => unitB.AddStop(2, "Panel request for floor 2");
-
             // Log grid is hidden until requested
             dgvLog.Visible = false;
+            deleteLog.Visible = false;
             dgvLog.ReadOnly = true;
             dgvLog.AllowUserToAddRows = false;
+            dgvLog.AllowUserToDeleteRows = false;
+            dgvLog.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvLog.MultiSelect = true;
+            dgvLog.KeyDown += (s, ev) =>
+            {
+                if (ev.KeyCode == Keys.Delete) { deleteLog.PerformClick(); ev.Handled = true; }
+            };
             dgvLog.RowHeadersVisible = false;
             dgvLog.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
@@ -119,15 +146,28 @@ namespace Elevator
             foreach (var u in dispatcher.Units) u.DoorTick();
         }
 
-        // Buttons
+        // Hall call buttons: the dispatcher picks the elevator
         private void btnRequestFloor1_Click(object sender, EventArgs e) => dispatcher.AssignHallCall(1);
         private void btnRequestFloor2_Click(object sender, EventArgs e) => dispatcher.AssignHallCall(2);
 
+        // Control panel A: requests go to elevator A only
         private void btnPanelFloor1_Click(object sender, EventArgs e) => unitA.AddStop(1, "Panel request for floor 1");
         private void btnPanelFloor2_Click(object sender, EventArgs e) => unitA.AddStop(2, "Panel request for floor 2");
 
-        // Designer leftover; safe to delete together with its line in MainForm.Designer.cs
+        // Control panel B: requests go to elevator B only
+        private void btnPanelFloor1B_Click(object sender, EventArgs e) => unitB.AddStop(1, "Panel request for floor 1");
+        private void btnPanelFloor2B_Click(object sender, EventArgs e) => unitB.AddStop(2, "Panel request for floor 2");
+
+        // Door buttons: A and B each control their own elevator
+        private void OpendoorA_Click(object sender, EventArgs e) => unitA.OpenDoors("Open-door button pressed");
+        private void ClosedoorA_Click(object sender, EventArgs e) => unitA.CloseDoors("Close-door button pressed");
+        private void OpendoorB_Click(object sender, EventArgs e) => unitB.OpenDoors("Open-door button pressed");
+        private void ClosedoorB_Click(object sender, EventArgs e) => unitB.CloseDoors("Close-door button pressed");
+
+        // Designer leftovers (empty). To remove them, also delete the matching
+        // "+= new EventHandler(...)" lines in MainForm.Designer.cs, or the project won't compile.
         private void button2_Click(object sender, EventArgs e) { }
+        private void lblPanelDisplay_Click(object sender, EventArgs e) { }
 
         // Observer: hall displays shared by both elevators
         void IElevatorObserver.Update(ElevatorUnit elevator, string eventText) => RefreshHall();
@@ -156,8 +196,38 @@ namespace Elevator
             l.BackColor = Color.Black;
         }
 
-        // Database access runs off the UI thread to keep the animation smooth
-        private void RunInBackground(Func<object> work, Action<object> onSuccess, Action onFinished = null)
+        private static void MakeRound(Button b, string text, int diameter = 40)
+        {
+            Point centre = new Point(b.Left + b.Width / 2, b.Top + b.Height / 2);
+
+            b.Size = new Size(diameter, diameter);
+            b.Location = new Point(centre.X - diameter / 2, centre.Y - diameter / 2);
+
+            b.Text = text;
+            b.Font = new Font("Segoe UI", 12f, FontStyle.Bold);
+            b.TextAlign = ContentAlignment.MiddleCenter;
+            b.FlatStyle = FlatStyle.Flat;
+            b.FlatAppearance.BorderSize = 0;
+
+            using (var path = new GraphicsPath())
+            {
+                path.AddEllipse(0, 0, diameter, diameter);
+                b.Region = new Region(path);               // clips the button to a circle
+            }
+
+            // Smooth dark ring on top of the clipped edge
+            b.Paint += (s, e) =>
+            {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                using (var pen = new Pen(Color.DimGray, 3))
+                    e.Graphics.DrawEllipse(pen, 1, 1, diameter - 3, diameter - 3);
+            };
+        }
+
+        // Database access runs off the UI thread to keep the animation smooth.
+        // reportOnce: for background log writes, show a failure only once until a write succeeds again.
+        private void RunInBackground(Func<object> work, Action<object> onSuccess,
+                                     Action onFinished = null, bool reportOnce = false)
         {
             var bw = new BackgroundWorker();
 
@@ -165,8 +235,20 @@ namespace Elevator
 
             bw.RunWorkerCompleted += (s, e) =>           // UI thread
             {
-                if (e.Error != null) ShowDbError(e.Error);
-                else onSuccess?.Invoke(e.Result);
+                if (e.Error != null)
+                {
+                    if (!reportOnce) ShowDbError(e.Error);
+                    else if (!dbErrorShown)
+                    {
+                        dbErrorShown = true;             // set first: the message box is modal
+                        ShowDbError(e.Error);
+                    }
+                }
+                else
+                {
+                    if (reportOnce) dbErrorShown = false;
+                    onSuccess?.Invoke(e.Result);
+                }
 
                 onFinished?.Invoke();
                 bw.Dispose();
@@ -181,14 +263,37 @@ namespace Elevator
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
+        // Called on the UI thread for every loggable event: the time is taken now,
+        // the actual write is done in the background, in the order the events happened.
         private void WriteLog(int floor, string text)
         {
-            RunInBackground(
-                () => { db.AddEntry(floor, text); return null; },
-                null);
+            logQueue.Enqueue((floor, text, DateTime.Now));
+            if (!logWorkerBusy) DrainLogQueue();
         }
 
-        private void btnLog_Click(object sender, EventArgs e)
+        private void DrainLogQueue()
+        {
+            logWorkerBusy = true;
+            RunInBackground(
+                () =>
+                {
+                    while (logQueue.TryDequeue(out var item))
+                        db.AddEntry(item.Floor, item.Text, item.When);
+                    return null;
+                },
+                null,
+                () =>
+                {
+                    logWorkerBusy = false;
+                    if (!logQueue.IsEmpty) DrainLogQueue();   // events arrived while the worker was finishing
+                },
+                reportOnce: true);
+        }
+
+        private void btnLog_Click(object sender, EventArgs e) => ShowLog();
+
+        // Loads the log from the database into the grid (also used after a delete)
+        private void ShowLog()
         {
             btnLog.Enabled = false;                      // blocks repeat clicks while loading
             RunInBackground(
@@ -203,15 +308,38 @@ namespace Elevator
 
                     ClientSize = new Size(expandedWidth, ClientSize.Height);   // widen the form to show the grid
                     dgvLog.Visible = true;
+                    deleteLog.Visible = true;
                 },
                 () => btnLog.Enabled = true);
         }
 
-        private void lblPanelDisplay_Click(object sender, EventArgs e)
+        // Deletes the selected log row(s) after confirmation
+        private void deleteLog_Click(object sender, EventArgs e)
         {
+            if (dgvLog.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Select the log row(s) you want to delete first.", "Elevator Log",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
+            var ids = dgvLog.SelectedRows.Cast<DataGridViewRow>()
+                            .Select(r => Convert.ToInt32(r.Cells["LogID"].Value))
+                            .ToList();
+
+            string question = ids.Count == 1
+                ? "Delete the selected log entry?"
+                : $"Delete the {ids.Count} selected log entries?";
+
+            if (MessageBox.Show(question, "Elevator Log", MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question) != DialogResult.Yes)
+                return;
+
+            deleteLog.Enabled = false;
+            RunInBackground(
+                () => db.DeleteEntries(ids),
+                result => ShowLog(),                     // reload so the grid matches the database
+                () => deleteLog.Enabled = true);
         }
-
-        
     }
 }

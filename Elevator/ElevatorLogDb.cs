@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿//ElevatorLogDb.cs
+
+using System.Data;
 using System.Data.OleDb;
 
 namespace Elevator
@@ -8,18 +10,19 @@ namespace Elevator
         private readonly OleDbDataAdapter adapter;
         private readonly DataTable table = new DataTable();
         private readonly object sync = new object();
+        private readonly string connStr;
 
         public ElevatorLogDb()
         {
             // relative path: the database sits next to the .exe
             string path = Path.Combine(AppContext.BaseDirectory, "Elevator.accdb");
-            string connStr = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={path};";
+            connStr = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={path};";
 
             adapter = new OleDbDataAdapter(
                 "SELECT LogID, CurrentFloor, EventText, LoggedAt FROM ElevatorLog ORDER BY LogID",
                 connStr);
             adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-            new OleDbCommandBuilder(adapter);
+            new OleDbCommandBuilder(adapter);   // generates the INSERT and DELETE commands used by Update()
         }
 
         public DataTable Load()
@@ -39,7 +42,9 @@ namespace Elevator
             }
         }
 
-        public void AddEntry(int floor, string text)
+        // 'when' is captured on the UI thread at the moment of the event, so the
+        // timestamp is correct even if the background write happens a little later.
+        public void AddEntry(int floor, string text, DateTime when)
         {
             try
             {
@@ -50,7 +55,7 @@ namespace Elevator
                     DataRow row = table.NewRow();
                     row["CurrentFloor"] = floor;
                     row["EventText"] = text;
-                    row["LoggedAt"] = DateTime.Now;
+                    row["LoggedAt"] = when;
                     table.Rows.Add(row);
 
                     adapter.Update(table);
@@ -59,6 +64,34 @@ namespace Elevator
             catch (Exception ex)
             {
                 throw new InvalidOperationException("Could not save the log entry. " + ex.Message, ex);
+            }
+        }
+
+        // Disconnected model: mark rows as deleted in the DataTable, then DataAdapter.Update()
+        // sends the DELETE commands to the database (no ExecuteNonQuery).
+        public int DeleteEntries(IEnumerable<int> logIds)
+        {
+            try
+            {
+                lock (sync)
+                {
+                    table.Clear();
+                    adapter.Fill(table);                       // make sure the rows are current
+
+                    int deleted = 0;
+                    foreach (int id in logIds)
+                    {
+                        DataRow row = table.Rows.Find(id);     // LogID is the primary key (AddWithKey)
+                        if (row != null) { row.Delete(); deleted++; }
+                    }
+
+                    adapter.Update(table);
+                    return deleted;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Could not delete the log entry. " + ex.Message, ex);
             }
         }
     }

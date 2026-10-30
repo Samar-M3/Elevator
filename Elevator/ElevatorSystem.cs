@@ -1,4 +1,7 @@
-﻿using System;
+﻿//ElevatorSystem.cs
+//Elevator system simulation with state and observer patterns, including elevator units, states, and a dispatcher for handling hall calls.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,6 +32,8 @@ namespace Elevator
         void MoveTick(ElevatorUnit e);                  // movement timer
         void DoorTick(ElevatorUnit e);                  // door timer
         void Request(ElevatorUnit e, int floor);
+        void OpenDoorRequest(ElevatorUnit e);           // "open door" button
+        void CloseDoorRequest(ElevatorUnit e);          // "close door" button
     }
 
     public abstract class ElevatorStateBase : IElevatorState
@@ -38,6 +43,8 @@ namespace Elevator
         public virtual void MoveTick(ElevatorUnit e) { }
         public virtual void DoorTick(ElevatorUnit e) { }
         public virtual void Request(ElevatorUnit e, int floor) => e.Enqueue(floor);
+        public virtual void OpenDoorRequest(ElevatorUnit e) { }    // ignored unless a state overrides it
+        public virtual void CloseDoorRequest(ElevatorUnit e) { }
     }
 
     public class IdleState : ElevatorStateBase
@@ -49,8 +56,11 @@ namespace Elevator
             if (floor == e.CurrentFloor) e.SetState(new DoorsOpeningState());   // already here: just open
             else { e.Enqueue(floor); e.StartNextOrIdle(); }                     // go there
         }
+
+        public override void OpenDoorRequest(ElevatorUnit e) => e.SetState(new DoorsOpeningState());
     }
 
+    // Door buttons do nothing while moving
     public class MovingState : ElevatorStateBase
     {
         public override string Name => "Moving";
@@ -85,6 +95,8 @@ namespace Elevator
             if (floor != e.CurrentFloor) e.Enqueue(floor);
         }
 
+        public override void CloseDoorRequest(ElevatorUnit e) => e.SetState(new DoorsClosingState());
+
         public override void DoorTick(ElevatorUnit e)
         {
             e.DoorOpen = Math.Min(e.DoorOpen + ElevatorUnit.DOOR_STEP, e.DoorMax);
@@ -109,6 +121,9 @@ namespace Elevator
             else e.Enqueue(floor);
         }
 
+        public override void OpenDoorRequest(ElevatorUnit e) => e.HoldTicks = ElevatorUnit.HOLD_TICKS;
+        public override void CloseDoorRequest(ElevatorUnit e) => e.SetState(new DoorsClosingState());
+
         public override void DoorTick(ElevatorUnit e)
         {
             if (--e.HoldTicks <= 0) e.SetState(new DoorsClosingState());
@@ -124,6 +139,8 @@ namespace Elevator
             if (floor == e.CurrentFloor) e.SetState(new DoorsOpeningState());    // reopen, like a real door sensor
             else e.Enqueue(floor);
         }
+
+        public override void OpenDoorRequest(ElevatorUnit e) => e.SetState(new DoorsOpeningState());
 
         public override void DoorTick(ElevatorUnit e)
         {
@@ -189,6 +206,20 @@ namespace Elevator
             if (logText != null) Notify(logText);
             State.Request(this, floor);
             Notify(null);                          // refresh the button lights
+        }
+
+        public void OpenDoors(string logText = null)
+        {
+            if (logText != null) Notify(logText);
+            State.OpenDoorRequest(this);
+            Notify(null);
+        }
+
+        public void CloseDoors(string logText = null)
+        {
+            if (logText != null) Notify(logText);
+            State.CloseDoorRequest(this);
+            Notify(null);
         }
 
         public void Enqueue(int floor)
@@ -280,7 +311,7 @@ namespace Elevator
             ElevatorUnit already = units.FirstOrDefault(u => u.IsServing(floor));
             if (already != null)
             {
-                already.AddStop(floor);
+                already.AddStop(floor, $"Hall call at floor {floor} (already being served)");
                 return already;
             }
 
