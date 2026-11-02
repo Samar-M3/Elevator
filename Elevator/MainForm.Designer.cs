@@ -74,8 +74,8 @@
             btnPanelFloor2 = new Button();
             lblFloor1StatusA = new Label();
             lblFloor2StatusA = new Label();
-            btnRequestFloor2 = new Button();
-            btnRequestFloor1 = new Button();
+            btnRequestFloor2A = new Button();
+            btnRequestFloor1A = new Button();
             tmrElevator = new System.Windows.Forms.Timer(components);
             dgvLog = new DataGridView();
             tmrDoor = new System.Windows.Forms.Timer(components);
@@ -91,6 +91,8 @@
             panel6 = new Panel();
             Door1 = new Panel();
             panel5 = new Panel();
+            btnRequestFloor2B = new Button();
+            btnRequestFloor1B = new Button();
             MainPanel.SuspendLayout();
             groupBox1.SuspendLayout();
             pnlShaftA.SuspendLayout();
@@ -111,6 +113,8 @@
             // MainPanel
             // 
             MainPanel.BackColor = SystemColors.InactiveCaption;
+            MainPanel.Controls.Add(btnRequestFloor1B);
+            MainPanel.Controls.Add(btnRequestFloor2B);
             MainPanel.Controls.Add(deleteLog);
             MainPanel.Controls.Add(lblFloor1StatusB);
             MainPanel.Controls.Add(groupBox1);
@@ -121,8 +125,8 @@
             MainPanel.Controls.Add(grpControlPanel);
             MainPanel.Controls.Add(lblFloor1StatusA);
             MainPanel.Controls.Add(lblFloor2StatusA);
-            MainPanel.Controls.Add(btnRequestFloor2);
-            MainPanel.Controls.Add(btnRequestFloor1);
+            MainPanel.Controls.Add(btnRequestFloor2A);
+            MainPanel.Controls.Add(btnRequestFloor1A);
             MainPanel.Location = new Point(12, 0);
             MainPanel.Name = "MainPanel";
             MainPanel.Size = new Size(818, 429);
@@ -130,7 +134,7 @@
             // 
             // deleteLog
             // 
-            deleteLog.Location = new Point(675, 373);
+            deleteLog.Location = new Point(706, 394);
             deleteLog.Name = "deleteLog";
             deleteLog.Size = new Size(94, 29);
             deleteLog.TabIndex = 13;
@@ -467,7 +471,7 @@
             // 
             // btnLog
             // 
-            btnLog.Location = new Point(28, 383);
+            btnLog.Location = new Point(15, 394);
             btnLog.Name = "btnLog";
             btnLog.Size = new Size(94, 29);
             btnLog.TabIndex = 6;
@@ -559,23 +563,23 @@
             lblFloor2StatusA.Text = "status";
             lblFloor2StatusA.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // btnRequestFloor2
+            // btnRequestFloor2A
             // 
-            btnRequestFloor2.Location = new Point(353, 140);
-            btnRequestFloor2.Name = "btnRequestFloor2";
-            btnRequestFloor2.Size = new Size(94, 29);
-            btnRequestFloor2.TabIndex = 2;
-            btnRequestFloor2.Text = "call";
-            btnRequestFloor2.UseVisualStyleBackColor = true;
+            btnRequestFloor2A.Location = new Point(81, 57);
+            btnRequestFloor2A.Name = "btnRequestFloor2A";
+            btnRequestFloor2A.Size = new Size(94, 29);
+            btnRequestFloor2A.TabIndex = 2;
+            btnRequestFloor2A.Text = "call";
+            btnRequestFloor2A.UseVisualStyleBackColor = true;
             // 
-            // btnRequestFloor1
+            // btnRequestFloor1A
             // 
-            btnRequestFloor1.Location = new Point(353, 363);
-            btnRequestFloor1.Name = "btnRequestFloor1";
-            btnRequestFloor1.Size = new Size(94, 29);
-            btnRequestFloor1.TabIndex = 1;
-            btnRequestFloor1.Text = "call";
-            btnRequestFloor1.UseVisualStyleBackColor = true;
+            btnRequestFloor1A.Location = new Point(75, 349);
+            btnRequestFloor1A.Name = "btnRequestFloor1A";
+            btnRequestFloor1A.Size = new Size(94, 29);
+            btnRequestFloor1A.TabIndex = 1;
+            btnRequestFloor1A.Text = "call";
+            btnRequestFloor1A.UseVisualStyleBackColor = true;
             // 
             // dgvLog
             // 
@@ -698,6 +702,24 @@
             panel5.Size = new Size(14, 425);
             panel5.TabIndex = 3;
             // 
+            // btnRequestFloor2B
+            // 
+            btnRequestFloor2B.Location = new Point(652, 57);
+            btnRequestFloor2B.Name = "btnRequestFloor2B";
+            btnRequestFloor2B.Size = new Size(94, 29);
+            btnRequestFloor2B.TabIndex = 14;
+            btnRequestFloor2B.Text = "call";
+            btnRequestFloor2B.UseVisualStyleBackColor = true;
+            // 
+            // btnRequestFloor1B
+            // 
+            btnRequestFloor1B.Location = new Point(652, 349);
+            btnRequestFloor1B.Name = "btnRequestFloor1B";
+            btnRequestFloor1B.Size = new Size(94, 29);
+            btnRequestFloor1B.TabIndex = 15;
+            btnRequestFloor1B.Text = "call";
+            btnRequestFloor1B.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -737,8 +759,8 @@
         private Panel MainPanel;
         private Panel shaftpanel;
         private Button btnPanelFloor1;
-        private Button btnRequestFloor1;
-        private Button btnRequestFloor2;
+        private Button btnRequestFloor1A;
+        private Button btnRequestFloor2A;
         private Label lblFloor1StatusA;
         private GroupBox grpControlPanel;
         private Button btnPanelFloor2;
@@ -798,5 +820,7 @@
         private Button ClosedoorA;
         private Button OpendoorA;
         private Button deleteLog;
+        private Button btnRequestFloor1B;
+        private Button btnRequestFloor2B;
     }
 }

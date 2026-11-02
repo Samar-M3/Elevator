@@ -1,5 +1,4 @@
-﻿//ElevatorView.cs: This file defines the ElevatorView class, which implements the IElevatorObserver interface. It is responsible for driving the controls of one elevator and refreshing them whenever the ElevatorUnit changes. The class is built from Panels and Labels only, and it manages the visual representation of the elevator, including the car, cable, doors, and indicators.
-
+﻿
 using System.Reflection;
 
 namespace Elevator

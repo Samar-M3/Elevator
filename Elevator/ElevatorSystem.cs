@@ -1,5 +1,4 @@
-﻿//ElevatorSystem.cs
-//Elevator system simulation with state and observer patterns, including elevator units, states, and a dispatcher for handling hall calls.
+﻿
 
 using System;
 using System.Collections.Generic;
