@@ -12,21 +12,7 @@ using System.Drawing.Drawing2D;
 
 namespace Elevator
 {
-    // Expected control names:
-    //  Elevator A: pnlShaftA, pnlCarA, pnlCableA, lblCarIndicatorA, lblPanelDisplay,
-    //              btnPanelFloor1, btnPanelFloor2, OpendoorA, ClosedoorA
-    //  Elevator B: pnlShaftB, pnlCarB, pnlCableB, lblCarIndicatorB, lblPanelDisplayB,
-    //              btnPanelFloor1B, btnPanelFloor2B, OpendoorB, ClosedoorB
-    //  Call buttons (one per elevator per floor): btnRequestFloor1A, btnRequestFloor2A,
-    //              btnRequestFloor1B, btnRequestFloor2B
-    //  Shared:     btnLog, deleteLog, dgvLog, tmrElevator, tmrDoor
-    //  Hall displays (one per elevator per floor): lblFloor1StatusA, lblFloor1StatusB,
-    //              lblFloor2StatusA, lblFloor2StatusB
-
-    /// <summary>
-    /// Main form. It is also an observer (IElevatorObserver) so that it can refresh the
-    /// hall displays and call-button colours whenever either elevator changes.
-    /// </summary>
+   
     public partial class MainForm : Form, IElevatorObserver
     {
         private const int FLOOR2_Y = 26;             // car top position at floor 2

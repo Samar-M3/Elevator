@@ -45,7 +45,6 @@ namespace Elevator
         public virtual void OpenDoorRequest(ElevatorUnit e) { }    // ignored unless a state overrides it
         public virtual void CloseDoorRequest(ElevatorUnit e) { }
     }
-
     public class IdleState : ElevatorStateBase
     {
         public override string Name => "Idle";
