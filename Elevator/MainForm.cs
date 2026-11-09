@@ -16,7 +16,7 @@ namespace Elevator
     public partial class MainForm : Form, IElevatorObserver
     {
         private const int FLOOR2_Y = 26;             // car top position at floor 2
-
+           
         private readonly ElevatorLogDb db = new ElevatorLogDb();
         private readonly ElevatorDispatcher dispatcher = new ElevatorDispatcher();   // holds both units; AssignHallCall is not used by the call buttons yet
 
@@ -99,6 +99,7 @@ namespace Elevator
             dispatcher.Add(unitA);
             dispatcher.Add(unitB);
 
+            //Connectiing the elevator login to UI
             viewA = new ElevatorView(unitA, pnlShaftA, pnlCarA, pnlCableA,
                                      lblPanelDisplay, lblCarIndicatorA,
                                      btnPanelFloor1, btnPanelFloor2);
@@ -158,7 +159,7 @@ namespace Elevator
             foreach (var u in dispatcher.Units) u.DoorTick();
         }
 
-        // Call buttons: each button calls its own elevator only (A's buttons -> A, B's buttons -> B).
+       
         // The dispatcher is not used here, so the nearest elevator is not chosen automatically.
         private void btnRequestFloor1A_Click(object sender, EventArgs e) => unitA.AddStop(1, "Call button pressed at floor 1");
         private void btnRequestFloor2A_Click(object sender, EventArgs e) => unitA.AddStop(2, "Call button pressed at floor 2");
@@ -179,9 +180,6 @@ namespace Elevator
         private void OpendoorB_Click(object sender, EventArgs e) => unitB.OpenDoors("Open-door button pressed");
         private void ClosedoorB_Click(object sender, EventArgs e) => unitB.CloseDoors("Close-door button pressed");
 
-        // Empty handlers left over from the Designer. They do nothing. To remove them, also
-        // delete the matching "+= new EventHandler(...)" lines in MainForm.Designer.cs,
-        // or the project won't compile.
         private void button2_Click(object sender, EventArgs e) { }
         private void lblPanelDisplay_Click(object sender, EventArgs e) { }
 
@@ -248,11 +246,7 @@ namespace Elevator
             };
         }
 
-        /// <summary>
-        /// Runs database work on a BackgroundWorker so the animation never freezes.
-        /// <paramref name="work"/> runs on the worker thread, and <paramref name="onSuccess"/>
-        /// and <paramref name="onFinished"/> run back on the UI thread.
-        /// </summary>
+    
         // Database access runs off the UI thread to keep the animation smooth.
         // reportOnce: for background log writes, show a failure only once until a write succeeds again.
         private void RunInBackground(Func<object> work, Action<object> onSuccess,
